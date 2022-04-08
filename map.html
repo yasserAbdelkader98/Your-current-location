@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="map.css">
+    <script src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyB90FxtYG_ybAYXGkz0ybkmkboE2nEbezI"></script>
+</head>
+<body>
+    <div class="container">
+        <section class="buttons">
+            <button onclick="getData" id='displayMap'>display map</button>
+            <button id='detailsInfo'>detailed information</button>
+        </section>
+        <section class="display">
+            <div class="map" id='map'></div>
+            <div class="details" id='details'>
+                <label>Lattitude (Degree)</label>
+                <span id='lat'></span>
+                <label>longitude (Degree)</label>
+                <span id="lon"></span>
+                <label>Accuracy</label>
+                <span id="acc"></span>
+                <label>Current Data and time</label>
+                <span id="time"></span>
+            </div>
+        </section>
+    </div>
+    <script>
+
+        let myMap = document.getElementById('map');
+        let details = document.getElementById('details');
+        let MapButton = document.getElementById('displayMap');
+        let detailsButton = document.getElementById('detailsInfo');
+        
+        let firstSpan = document.getElementById('lat');
+        let secSpan = document.getElementById('lon');
+        let thirdSpan = document.getElementById('acc');
+        let fourthSpan = document.getElementById('time');
+
+        function getData(){
+            if(navigator.geolocation){
+                navigator.geolocation.getCurrentPosition(getposition, errorhandeler);
+            }else{
+                myMap.innerText = 'sorry, you should update your browser first'
+            }
+        }
+
+        function getposition(myPosition){
+            console.log(myPosition);
+            let lat = myPosition.coords.latitude;
+            let lon = myPosition.coords.longitude;
+            let acc = myPosition.coords.accuracy;
+            let date = myPosition.timestamp;
+
+            let myLocation = new google.maps.LatLng(lat, lon);
+            let specs = { zoom: 17, center: myLocation };
+            new google.maps.Map(myMap, specs);    
+            firstSpan.textContent = lat;
+            secSpan.textContent = lon;
+            thirdSpan.textContent = acc;
+            let getDate = function(){
+               return new Date(date);
+            };
+            fourthSpan.textContent = getDate();
+
+        }
+
+        function errorhandeler(e){
+            console.log(e);
+        }
+
+        MapButton.addEventListener('click',function(){
+            getData();
+            details.classList.remove('show');
+            myMap.classList.remove('hide')
+        })
+
+        detailsButton.addEventListener('click',function(){
+            myMap.classList.add('hide')
+            details.classList.add('show');
+        })
+
+
+    </script>
+</body>
+</html>
